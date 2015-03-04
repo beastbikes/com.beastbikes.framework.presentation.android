@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Compass -->
+    <declare-styleable name="Compass">
+        <attr name="dialFace" format="reference" />
+        <attr name="dialNeedle" format="reference" />
+    </declare-styleable>
+    <declare-styleable name="PatternTextView">
+        <attr name="pattern" format="string" />
+    </declare-styleable>
+    <declare-styleable name="ScrollableViewPager">
+        <attr name="scrollable" format="boolean" />
+    </declare-styleable>
+    <declare-styleable name="CircularImageView">
+        <attr name="borderWidth" format="dimension" />
+        <attr name="borderColor" format="color" />
+    </declare-styleable>
+
+</resources>
