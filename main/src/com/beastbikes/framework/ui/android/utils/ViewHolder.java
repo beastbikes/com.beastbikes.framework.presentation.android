@@ -12,6 +12,11 @@ import android.view.View;
  */
 public abstract class ViewHolder<T> {
 
+	@SuppressWarnings("unchecked")
+	public static <T extends ViewHolder<?>> T as(View v) {
+		return (T) v.getTag();
+	}
+
 	private final View view;
 
 	/**
@@ -38,14 +43,9 @@ public abstract class ViewHolder<T> {
 	/**
 	 * Bind the specified view
 	 * 
-	 * @param v
-	 *            view
+	 * @param t
+	 *            The object to bound
 	 */
-	@SuppressWarnings("unchecked")
-	public final void bind(View v) {
-		this.onBind((T) v.getTag());
-	}
-
-	public abstract void onBind(T t);
+	public abstract void bind(T t);
 
 }
