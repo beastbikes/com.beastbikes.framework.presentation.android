@@ -87,20 +87,8 @@ public abstract class BaseFragment extends Fragment implements
 
 	@Override
 	public void onAttach(Activity activity) {
-		if (activity instanceof RequestQueueManager) {
-			this.requestQueue = ((RequestQueueManager) activity)
-					.getRequestQueue();
-		} else {
-			this.requestQueue = RequestQueueFactory.newRequestQueue(activity);
-		}
-
-		if (activity instanceof AsyncTaskQueueManager) {
-			this.asyncTaskQueue = ((AsyncTaskQueueManager) activity)
-					.getAsyncTaskQueue();
-		} else {
-			this.asyncTaskQueue = AsyncTaskQueueFactory.newTaskQueue(activity);
-		}
-
+		this.requestQueue = RequestQueueFactory.newRequestQueue(activity);
+		this.asyncTaskQueue = AsyncTaskQueueFactory.newTaskQueue(activity);
 		super.onAttach(activity);
 	}
 
@@ -114,8 +102,8 @@ public abstract class BaseFragment extends Fragment implements
 	@Override
 	public void onDetach() {
 		this.requestQueue.cancelAll(this);
-		this.asyncTaskQueue.cancelAll(this);
 		this.requestQueue.stop();
+		this.asyncTaskQueue.cancelAll(this);
 		this.asyncTaskQueue.stop();
 		super.onDestroy();
 	}
