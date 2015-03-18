@@ -28,9 +28,11 @@ public class WebActivity extends BaseActivity {
 
 	public static final String EXTRA_NONE_ANIMATION = "none_animation";
 
-	private static final String DEFAULT_ERROR_PAGE_PATH = "webkit/error.html";
+	private static final String WEBKIT = "webkit";
 
-	private static final String DEFAULT_ERROR_PAGE_URL = "file:///android_asset/" + DEFAULT_ERROR_PAGE_PATH;
+	private static final String ERROR_HTML = "error.html";
+
+	private static final String DEFAULT_ERROR_PAGE_URL = "file:///android_asset/" + WEBKIT + "/" + ERROR_HTML;
 
 	private static final String TAG = "WebActivity";
 
@@ -91,11 +93,17 @@ public class WebActivity extends BaseActivity {
 					String description, String failingUrl) {
 				final AssetManager am = getAssets();
 				try {
-					final String[] errorPage = am.list(DEFAULT_ERROR_PAGE_PATH);
-					if (errorPage != null && errorPage.length > 0) {
-						view.loadUrl(DEFAULT_ERROR_PAGE_URL);
+					final String[] webkit = am.list(WEBKIT);
+					if (null == webkit)
+						return;
+
+					for (int i = 0; i < webkit.length; i++) {
+						if (ERROR_HTML.equalsIgnoreCase(webkit[i])) {
+							view.loadUrl(DEFAULT_ERROR_PAGE_URL);
+						}
 					}
 				} catch (IOException e) {
+					Log.e(TAG, "Default error page not found", e);
 				}
 			}
 
