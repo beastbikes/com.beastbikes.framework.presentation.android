@@ -1,6 +1,9 @@
 package com.beastbikes.framework.ui.android;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
@@ -21,6 +24,8 @@ public class WebActivity extends BaseActivity {
 	public static final String EXTRA_TITLE = "title";
 
 	public static final String EXTRA_URL = "url";
+
+	public static final String EXTRA_HTTP_HEADERS = "additional_http_headers";
 
 	public static final String EXTRA_ENTER_ANIMATION = "enter_animation";
 
@@ -123,7 +128,21 @@ public class WebActivity extends BaseActivity {
 
 			final String url = intent.getStringExtra(EXTRA_URL);
 			if (!TextUtils.isEmpty(url)) {
-				this.browser.loadUrl(url);
+				final Map<String, String> headers = new HashMap<String, String>();
+				final Bundle bundle = intent.getBundleExtra(EXTRA_HTTP_HEADERS);
+
+				if (null != bundle && bundle.size() > 0) {
+					final Set<String> names = headers.keySet();
+					for (final String key : names) {
+						final String value = bundle.getString(key);
+	
+						if (!TextUtils.isEmpty(value)) {
+							headers.put(key, bundle.getString(value));
+						}
+					}
+				}
+
+				this.browser.loadUrl(url, headers);
 			}
 		}
 	}
