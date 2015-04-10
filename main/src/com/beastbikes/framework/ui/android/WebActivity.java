@@ -137,7 +137,7 @@ public class WebActivity extends BaseActivity {
 						final String value = bundle.getString(key);
 	
 						if (!TextUtils.isEmpty(value)) {
-							headers.put(key, bundle.getString(value));
+							headers.put(key, value);
 						}
 					}
 				}
