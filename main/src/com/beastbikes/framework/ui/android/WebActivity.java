@@ -132,7 +132,7 @@ public class WebActivity extends BaseActivity {
 				final Bundle bundle = intent.getBundleExtra(EXTRA_HTTP_HEADERS);
 
 				if (null != bundle && bundle.size() > 0) {
-					final Set<String> names = headers.keySet();
+					final Set<String> names = bundle.keySet();
 					for (final String key : names) {
 						final String value = bundle.getString(key);
 	
