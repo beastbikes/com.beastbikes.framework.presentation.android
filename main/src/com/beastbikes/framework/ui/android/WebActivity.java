@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.content.Intent;
@@ -12,7 +15,6 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.ViewGroup.LayoutParams;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -40,6 +42,8 @@ public class WebActivity extends BaseActivity {
 	private static final String DEFAULT_ERROR_PAGE_URL = "file:///android_asset/" + WEBKIT + "/" + ERROR_HTML;
 
 	private static final String TAG = "WebActivity";
+
+	private static final Logger logger = LoggerFactory.getLogger(TAG);
 
 	private int enterAnim;
 
@@ -85,17 +89,20 @@ public class WebActivity extends BaseActivity {
 
 			@Override
 			public void onPageStarted(WebView view, String url, Bitmap favicon) {
-				Log.v(TAG, "Loading " + url);
+				logger.info("Loading " + url);
 			}
 
 			@Override
 			public void onPageFinished(WebView view, String url) {
-				Log.v(TAG, "Loading " + url + " complete");
+				logger.info("Loading " + url + " complete");
 			}
 
 			@Override
 			public void onReceivedError(WebView view, int errorCode,
 					String description, String failingUrl) {
+				logger.info(String.format("Load %s failed, error %d (%s)",
+						failingUrl, errorCode, description));
+
 				final AssetManager am = getAssets();
 				try {
 					final String[] webkit = am.list(WEBKIT);
@@ -108,7 +115,7 @@ public class WebActivity extends BaseActivity {
 						}
 					}
 				} catch (IOException e) {
-					Log.e(TAG, "Default error page not found", e);
+					logger.warn("Default error page not found", e);
 				}
 			}
 
