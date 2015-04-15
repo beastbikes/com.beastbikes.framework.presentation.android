@@ -2,11 +2,14 @@ package com.beastbikes.framework.ui.android;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.beastbikes.framework.ui.android.utils.Toasts;
 
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
@@ -16,6 +19,9 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.ViewGroup.LayoutParams;
+import android.webkit.ConsoleMessage;
+import android.webkit.JsResult;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -79,6 +85,44 @@ public class WebActivity extends BaseActivity {
 		settings.setLoadsImagesAutomatically(true);
 		settings.setSupportZoom(false);
 
+		this.browser.setWebChromeClient(new WebChromeClient() {
+
+			@Override
+			public boolean onJsAlert(WebView view, String url, String message,
+					JsResult result) {
+				Toasts.show(view.getContext(), message);
+				result.confirm();
+				return true;
+			}
+
+			@Override
+			public boolean onConsoleMessage(ConsoleMessage cm) {
+				final String msg = String.format(Locale.getDefault(),
+						"%s#%d: %s", cm.sourceId(), cm.lineNumber(),
+						cm.message());
+
+				switch (cm.messageLevel()) {
+				case DEBUG:
+					logger.debug(msg);
+					break;
+				case ERROR:
+					logger.error(msg);
+					break;
+				case LOG:
+					logger.info(msg);
+					break;
+				case TIP:
+					logger.trace(msg);
+					break;
+				case WARNING:
+					logger.warn(msg);
+					break;
+				}
+
+				return super.onConsoleMessage(cm);
+			}
+
+		});
 		this.browser.setWebViewClient(new WebViewClient() {
 
 			@Override
@@ -142,7 +186,7 @@ public class WebActivity extends BaseActivity {
 					final Set<String> names = bundle.keySet();
 					for (final String key : names) {
 						final String value = bundle.getString(key);
-	
+
 						if (!TextUtils.isEmpty(value)) {
 							headers.put(key, value);
 						}
