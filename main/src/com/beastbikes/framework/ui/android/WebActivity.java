@@ -109,16 +109,7 @@ public class WebActivity extends BaseActivity {
 	}
 
 	protected boolean handleURL(String url) {
-		try {
-			final Intent intent = new Intent(null, Uri.parse(url));
-			intent.addCategory(Intent.CATEGORY_DEFAULT);
-			startActivity(intent);
-		} catch (ActivityNotFoundException e) {
-			logger.error("Unable to handle url " + url, e);
-			return false;
-		}
-
-		return true;
+		return false;
 	}
 
 	@SuppressLint("SetJavaScriptEnabled")
