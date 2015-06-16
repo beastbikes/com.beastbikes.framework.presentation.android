@@ -4,14 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.ViewGroup.LayoutParams;
@@ -32,10 +27,6 @@ public class WebActivity extends BaseActivity {
 	public static final String EXTRA_EXIT_ANIMATION = "exit_animation";
 
 	public static final String EXTRA_NONE_ANIMATION = "none_animation";
-
-	private static final String TAG = "WebActivity";
-
-	private static final Logger logger = LoggerFactory.getLogger(TAG);
 
 	private WebViewClient defaultWebViewClient;
 
