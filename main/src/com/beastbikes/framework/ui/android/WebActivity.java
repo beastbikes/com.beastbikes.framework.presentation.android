@@ -6,10 +6,15 @@ import java.util.Set;
 
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
+import android.app.DownloadManager;
+import android.app.DownloadManager.Request;
+import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.ViewGroup.LayoutParams;
+import android.webkit.DownloadListener;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -114,6 +119,31 @@ public class WebActivity extends BaseActivity {
 		settings.setLoadsImagesAutomatically(true);
 		settings.setSupportZoom(false);
 
+		this.browser.setDownloadListener(new DownloadListener() {
+			@Override
+			public void onDownloadStart(String url, String userAgent,
+					String contentDisposition, String mimetype,
+					long contentLength) {
+				final DownloadManager dm = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+				final Request request = new Request(Uri.parse(url));
+
+				if (!TextUtils.isEmpty(userAgent)) {
+					request.addRequestHeader("User-Agent", userAgent);
+				}
+
+				if (!TextUtils.isEmpty(contentDisposition)) {
+					request.addRequestHeader("Content-Disposition", contentDisposition);
+				}
+
+				if (!TextUtils.isEmpty(mimetype)) {
+					request.setMimeType(mimetype);
+				}
+
+				request.allowScanningByMediaScanner();
+				request.setAllowedNetworkTypes(Request.NETWORK_WIFI);
+				dm.enqueue(request);
+			}
+		});
 		this.browser.setWebChromeClient(getWebChromeClient());
 		this.browser.setWebViewClient(getWebViewClient());
 
