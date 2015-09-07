@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import com.beastbikes.framework.android.utils.PackageUtils;
+
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.DownloadManager;
@@ -112,11 +114,17 @@ public class WebActivity extends BaseActivity {
 	protected void setupBrowser() {
 		final Intent intent = getIntent();
 
+		final String ver = PackageUtils.getVersionName(this);
+		final String ext = getPackageName() + "/" + ver;
 		final WebSettings settings = this.browser.getSettings();
-		settings.setDisplayZoomControls(false);
+		settings.setAppCacheEnabled(true);
+		settings.setAppCachePath(getCacheDir().getAbsolutePath());
+		settings.setUserAgentString(settings.getUserAgentString() + " " + ext);
 		settings.setBuiltInZoomControls(false);
+		settings.setDatabaseEnabled(true);
+		settings.setDomStorageEnabled(true);
+		settings.setDisplayZoomControls(false);
 		settings.setJavaScriptEnabled(true);
-		settings.setLoadsImagesAutomatically(true);
 		settings.setSupportZoom(false);
 
 		this.browser.setDownloadListener(new DownloadListener() {
