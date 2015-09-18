@@ -22,6 +22,7 @@ public class CircularImageView extends AsyncImageView {
 	private final Paint edgePaint;
 	private final int borderWidth;
 	private final int borderColor;
+	private int borderType;
 
 	private Bitmap mask;
 
@@ -44,10 +45,12 @@ public class CircularImageView extends AsyncImageView {
 				R.styleable.CircularImageView_borderColor, dftColor);
 		this.borderWidth = ta.getDimensionPixelOffset(
 				R.styleable.CircularImageView_borderWidth, dftWidth);
+		this.borderType = ta
+				.getInt(R.styleable.CircularImageView_borderType, 1);
 		ta.recycle();
 
 		this.nonePaint = new Paint();
-
+		this.nonePaint.setAntiAlias(true);
 		this.edgePaint = new Paint();
 		this.edgePaint.setStyle(Paint.Style.STROKE);
 		this.edgePaint.setAntiAlias(true);
@@ -100,8 +103,13 @@ public class CircularImageView extends AsyncImageView {
 		final Bitmap bmp = Bitmap.createBitmap(width, height, cfg);
 		final Canvas canvas = new Canvas(bmp);
 		final int padding = this.borderWidth > 1 ? (this.borderWidth >> 1) : 1;
-		final RectF oval = new RectF(padding, padding, width - padding, height
-				- padding);
+		RectF oval;
+		if (borderType == 1) {
+			oval = new RectF(2 * padding, 2 * padding, width - 2 * padding,
+					height - 2 * padding);
+		} else {
+			oval = new RectF(0, 0, width, height);
+		}
 		canvas.drawOval(oval, this.nonePaint);
 		return bmp;
 	}
