@@ -51,7 +51,7 @@ public class DefaultWebViewClient extends WebViewClient {
 
 		try {
 			final URLConnection conn = new URL(url).openConnection();
-			conn.setRequestProperty("User-Agent", view.getSettings().getUserAgentString());
+			conn.setRequestProperty("User-Agent", this.webActivity.getUserAgent());
 			conn.setRequestProperty("Accept-Language", Locale.getDefault().getLanguage());
 			conn.setUseCaches(true);
 			conn.connect();
