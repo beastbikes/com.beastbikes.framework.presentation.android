@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Locale;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,10 +50,17 @@ public class DefaultWebViewClient extends WebViewClient {
 		if (!URLUtil.isNetworkUrl(url) || null == HttpResponseCache.getDefault())
 			return super.shouldInterceptRequest(view, url);
 
+		final Map<String, String> headers = this.webActivity.getRequestHeaders();
+
 		try {
 			final URLConnection conn = new URL(url).openConnection();
 			conn.setRequestProperty("User-Agent", this.webActivity.getUserAgent());
 			conn.setRequestProperty("Accept-Language", Locale.getDefault().getLanguage());
+
+			for (final Map.Entry<String, String> header : headers.entrySet()) {
+				conn.setRequestProperty(header.getKey(), header.getValue());
+			}
+
 			conn.setUseCaches(true);
 			conn.connect();
 

@@ -1,6 +1,8 @@
 package com.beastbikes.framework.ui.android;
 
 import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -130,7 +132,7 @@ public class WebActivity extends BaseActivity {
 		settings.setDisplayZoomControls(false);
 		settings.setJavaScriptEnabled(true);
 		settings.setSupportZoom(false);
-
+		
 		this.userAgent = settings.getUserAgentString();
 
 		this.browser.setDownloadListener(new DownloadListener() {
@@ -173,21 +175,7 @@ public class WebActivity extends BaseActivity {
 
 		final String url = intent.getDataString();
 		if (!TextUtils.isEmpty(url)) {
-			final Map<String, String> headers = new HashMap<String, String>();
-			final Bundle bundle = intent.getBundleExtra(EXTRA_HTTP_HEADERS);
-
-			if (null != bundle && bundle.size() > 0) {
-				final Set<String> names = bundle.keySet();
-				for (final String key : names) {
-					final String value = bundle.getString(key);
-
-					if (!TextUtils.isEmpty(value)) {
-						headers.put(key, value);
-					}
-				}
-			}
-
-			this.browser.loadUrl(url, headers);
+			this.browser.loadUrl(url, getRequestHeaders());
 		}
 	}
 
@@ -205,6 +193,27 @@ public class WebActivity extends BaseActivity {
 
 		return "Android " + Build.VERSION.RELEASE + " " + getPackageName()
 				+ "/" + PackageUtils.getVersionName(this);
+	}
+	
+	public Map<String, String> getRequestHeaders() {
+		final Map<String, String> headers = new HashMap<String, String>();
+		final Intent intent = getIntent();
+		if (null != intent) {
+			final Bundle bundle = intent.getBundleExtra(EXTRA_HTTP_HEADERS);
+
+			if (null != bundle && bundle.size() > 0) {
+				final Set<String> names = bundle.keySet();
+				for (final String key : names) {
+					final String value = bundle.getString(key);
+
+					if (!TextUtils.isEmpty(value)) {
+						headers.put(key, value);
+					}
+				}
+			}
+		}
+
+		return Collections.unmodifiableMap(headers);
 	}
 
 }
