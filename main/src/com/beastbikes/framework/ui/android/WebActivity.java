@@ -1,10 +1,11 @@
 package com.beastbikes.framework.ui.android;
 
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
-import com.beastbikes.framework.android.utils.PackageUtils;
 
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
@@ -13,6 +14,7 @@ import android.app.DownloadManager.Request;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.ViewGroup.LayoutParams;
@@ -22,6 +24,8 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
+
+import com.beastbikes.framework.android.utils.PackageUtils;
 
 public class WebActivity extends BaseActivity {
 
@@ -48,6 +52,8 @@ public class WebActivity extends BaseActivity {
 	private FrameLayout container;
 
 	private WebView browser;
+
+	private String userAgent;
 
 	public WebActivity() {
 		this.defaultWebViewClient = new DefaultWebViewClient(this);
@@ -126,6 +132,8 @@ public class WebActivity extends BaseActivity {
 		settings.setDisplayZoomControls(false);
 		settings.setJavaScriptEnabled(true);
 		settings.setSupportZoom(false);
+		
+		this.userAgent = settings.getUserAgentString();
 
 		this.browser.setDownloadListener(new DownloadListener() {
 			@Override
@@ -167,7 +175,30 @@ public class WebActivity extends BaseActivity {
 
 		final String url = intent.getDataString();
 		if (!TextUtils.isEmpty(url)) {
-			final Map<String, String> headers = new HashMap<String, String>();
+			this.browser.loadUrl(url, getRequestHeaders());
+		}
+	}
+
+	public String getUserAgent() {
+		if (!TextUtils.isEmpty(this.userAgent))
+			return this.userAgent;
+
+		try {
+			final Method getDefaultUserAgent = WebSettings.class.getMethod(
+					"getDefaultUserAgent", new Class[] { Context.class });
+			return String.valueOf(getDefaultUserAgent.invoke(WebSettings.class,
+					this));
+		} catch (Exception e) {
+		}
+
+		return "Android " + Build.VERSION.RELEASE + " " + getPackageName()
+				+ "/" + PackageUtils.getVersionName(this);
+	}
+	
+	public Map<String, String> getRequestHeaders() {
+		final Map<String, String> headers = new HashMap<String, String>();
+		final Intent intent = getIntent();
+		if (null != intent) {
 			final Bundle bundle = intent.getBundleExtra(EXTRA_HTTP_HEADERS);
 
 			if (null != bundle && bundle.size() > 0) {
@@ -180,9 +211,9 @@ public class WebActivity extends BaseActivity {
 					}
 				}
 			}
-
-			this.browser.loadUrl(url, headers);
 		}
+
+		return Collections.unmodifiableMap(headers);
 	}
 
 }
