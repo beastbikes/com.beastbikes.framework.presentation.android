@@ -1,7 +1,6 @@
 package com.beastbikes.framework.ui.android;
 
 import java.lang.reflect.Method;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -85,7 +84,12 @@ public class WebActivity extends BaseActivity {
 
 		this.setupBrowser();
 	}
-	
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+	}
+
 	protected WebView getBrowser() {
 		return this.browser;
 	}
@@ -175,7 +179,12 @@ public class WebActivity extends BaseActivity {
 
 		final String url = intent.getDataString();
 		if (!TextUtils.isEmpty(url)) {
-			this.browser.loadUrl(url, getRequestHeaders());
+			this.browser.post(new Runnable() {
+				@Override
+				public void run() {
+					browser.loadUrl(url, getRequestHeaders());
+				}
+			});
 		}
 	}
 
