@@ -20,6 +20,5 @@
             <enum name="outside" value="1" />
         </attr>
     </declare-styleable>
-    
 
 </resources>
