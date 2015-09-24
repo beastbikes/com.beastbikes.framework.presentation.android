@@ -1,19 +1,23 @@
 package com.beastbikes.framework.ui.android;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import android.annotation.TargetApi;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.net.http.HttpResponseCache;
 import android.text.TextUtils;
 import android.webkit.URLUtil;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -45,20 +49,40 @@ public class DefaultWebViewClient extends WebViewClient {
 	}
 
 	@Override
-	public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
-		logger.debug("Intercepting " + url);
-		if (!URLUtil.isNetworkUrl(url) || null == HttpResponseCache.getDefault())
-			return super.shouldInterceptRequest(view, url);
+	@TargetApi(21)
+	public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+		final Map<String, String> headers = new HashMap<String, String>(request.getRequestHeaders());
+		final Map<String, String> addtional = this.webActivity.getRequestHeaders();
+		if (null != addtional) {
+			headers.putAll(addtional);
+		}
 
-		final Map<String, String> headers = this.webActivity.getRequestHeaders();
+		final String method = request.getMethod();
+		final String url = request.getUrl().toString();
+		return this.shouldInterceptRequest(view, method, url, headers);
+	}
+
+	@Override
+	public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
+		return this.shouldInterceptRequest(view, "GET", url, this.webActivity.getRequestHeaders());
+	}
+
+	protected WebResourceResponse shouldInterceptRequest(WebView view, String method, String url, Map<String, String> headers) {
+		logger.debug("Intercepting " + url);
+
+		if (!URLUtil.isNetworkUrl(url) || null == HttpResponseCache.getDefault())
+			return null;
 
 		try {
-			final URLConnection conn = new URL(url).openConnection();
+			final HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+			conn.setRequestMethod(method);
 			conn.setRequestProperty("User-Agent", this.webActivity.getUserAgent());
 			conn.setRequestProperty("Accept-Language", Locale.getDefault().getLanguage());
 
-			for (final Map.Entry<String, String> header : headers.entrySet()) {
-				conn.setRequestProperty(header.getKey(), header.getValue());
+			if (null != headers) {
+				for (final Map.Entry<String, String> header : headers.entrySet()) {
+					conn.setRequestProperty(header.getKey(), header.getValue());
+				}
 			}
 
 			conn.setUseCaches(true);
@@ -76,7 +100,7 @@ public class DefaultWebViewClient extends WebViewClient {
 			logger.error("Intercepting " + url + " error", e);
 		}
 
-		return super.shouldInterceptRequest(view, url);
+		return null;
 	}
 
 	@Override
