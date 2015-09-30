@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import android.annotation.TargetApi;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.net.http.HttpResponseCache;
 import android.text.TextUtils;
 import android.webkit.URLUtil;
@@ -34,7 +33,7 @@ public class DefaultWebViewClient extends WebViewClient {
 	private static final String DEFAULT_ERROR_PAGE_URL = "file:///android_asset/"
 			+ WEBKIT + "/" + ERROR_HTML;
 
-	private static final String API_HOST = "api.beastbikes.com";
+	private static final String API_VERSION = "/api/1.0";
 
 	private static final Logger logger = LoggerFactory.getLogger(TAG);
 
@@ -57,9 +56,7 @@ public class DefaultWebViewClient extends WebViewClient {
 	public WebResourceResponse shouldInterceptRequest(WebView view,
 			WebResourceRequest request) {
 		final String url = request.getUrl().toString();
-		final Uri uri = Uri.parse(url);
-		final String host = uri.getHost();
-		if (host.equalsIgnoreCase(API_HOST)) {
+		if (url.contains(API_VERSION)) {
 			return null;
 		}
 		
@@ -77,11 +74,10 @@ public class DefaultWebViewClient extends WebViewClient {
 
 	@Override
 	public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
-		final Uri uri = Uri.parse(url);
-		final String host = uri.getHost();
-		if (host.equalsIgnoreCase(API_HOST)) {
+		if (url.contains(API_VERSION)) {
 			return null;
 		}
+		
 		return this.shouldInterceptRequest(view, "GET", url,
 				this.webActivity.getRequestHeaders());
 	}
