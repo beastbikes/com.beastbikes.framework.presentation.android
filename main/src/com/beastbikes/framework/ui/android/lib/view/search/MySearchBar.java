@@ -91,7 +91,7 @@ public class MySearchBar extends RelativeLayout {
 		searchButton.setBackgroundResource(R.drawable.search_btn_bg);
 		searchButton.setText(TextUtils.isEmpty(btnSearchText) ? context
 				.getString(R.string.search_btn_text_default) : btnSearchText);
-		searchButton.setTextSize(DensityUtil.dip2px(5, getContext()));
+		searchButton.setTextSize(DensityUtil.dip2px(6, getContext()));
 		searchButton.setTextColor(0xff4995dd);
 		RelativeLayout.LayoutParams pSearchButton = new RelativeLayout.LayoutParams(
 				RelativeLayout.LayoutParams.WRAP_CONTENT, DensityUtil.dip2px(
@@ -125,7 +125,7 @@ public class MySearchBar extends RelativeLayout {
 		autoCompleteTextView.setPadding(0, DensityUtil.dip2px(context, 5), 0,
 				DensityUtil.dip2px(context, 5));
 		autoCompleteTextView.setHintTextColor(0x33000000);
-		autoCompleteTextView.setTextSize(DensityUtil.dip2px(context, 5));
+		autoCompleteTextView.setTextSize(DensityUtil.dip2px(context, 6));
 		autoCompleteTextView.setTextColor(getResources().getColor(
 				android.R.color.black));
 		autoCompleteTextView.setDropDownBackgroundDrawable(new ColorDrawable(
