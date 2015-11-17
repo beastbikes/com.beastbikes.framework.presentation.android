@@ -116,7 +116,6 @@ public class DefaultWebChromeClient extends WebChromeClient {
 		final String msg = String.format(Locale.getDefault(),
 				"%s#%d: %s", cm.sourceId(), cm.lineNumber(),
 				cm.message());
-
 		switch (cm.messageLevel()) {
 		case DEBUG:
 			logger.debug(msg);
@@ -134,7 +133,6 @@ public class DefaultWebChromeClient extends WebChromeClient {
 			logger.warn(msg);
 			break;
 		}
-
 		return super.onConsoleMessage(cm);
 	}
 	
